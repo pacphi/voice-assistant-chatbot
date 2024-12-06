@@ -38,18 +38,15 @@ public class VoiceAssistantApplication {
 			@Value("${chatbot.prompt:classpath:/marvin.paranoid.android.txt}") Resource systemPrompt) {
 		return args -> {
 
-			// Create the ChatClient with with system prompt and conversation memory.
+			// Create the ChatClient with system prompt and conversation memory.
 			// The model and the audio formats are configured in the application.properties file.
 			var chatClient = chatClientBuilder
 				.defaultSystem(systemPrompt)
 				.defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
 				.build();
 
-			try (Scanner scanner = new Scanner(System.in)) {
-
-				// Audio utility to record and playback the audio.
-				Audio audio = new Audio();
-
+			// Audio utility to record and playback the audio.
+			try (Scanner scanner = new Scanner(System.in); Audio audio = new Audio();) {
 				// Start the chat loop
 				while (true) {					
 					//Record user's voice input
@@ -73,7 +70,7 @@ public class VoiceAssistantApplication {
 					// Print the text (e.g. transcription) response
 					System.out.println("\nASSISTANT: " + response.getContent());
 					// Play the audio response
-					Audio.play(response.getMedia().get(0).getDataAsByteArray());
+					audio.play(response.getMedia().get(0).getDataAsByteArray());
 				}
 			}
 		};
